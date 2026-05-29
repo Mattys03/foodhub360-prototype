@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FoodHub 360 - Ecossistema Digital de Gestao e Rentabilidade</title>
+    <meta name="description" content="FoodHub 360 - ecossistema digital inteligente de gestao gastronomica, focado em Menu Engineering, controle de estoque dinamico e integracao unificada de pedidos.">
+    <meta name="keywords" content="restaurante, gestao, estoque, KDS, PDV, rentabilidade, engenharia de cardapio">
+    <meta property="og:title" content="FoodHub 360 - Gestao Gastronomica Baseada em Dados">
+    <meta property="og:type" content="website">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- Login Overlay -->
+    <div class="login-overlay" id="login-overlay">
+        <div class="login-card">
+            <i class="fa-solid fa-utensils login-icon"></i>
+            <h2>FoodHub 360</h2>
+            <p class="login-subtitle">Selecione seu perfil para acessar o sistema</p>
+            <div class="login-roles">
+                <button class="login-role-btn" onclick="selectRole('balconista')">
+                    <i class="fa-solid fa-cash-register"></i>
+                    <div>
+                        <div>Balconista</div>
+                        <div class="role-desc">Confirmar pedidos e visualizar KDS</div>
+                    </div>
+                </button>
+                <button class="login-role-btn" onclick="selectRole('gerente')">
+                    <i class="fa-solid fa-chart-line"></i>
+                    <div>
+                        <div>Gerente</div>
+                        <div class="role-desc">Pedidos, estoque, margens e cupons</div>
+                    </div>
+                </button>
+                <button class="login-role-btn" onclick="selectRole('admin')">
+                    <i class="fa-solid fa-shield-halved"></i>
+                    <div>
+                        <div>Administrador</div>
+                        <div class="role-desc">Acesso total ao sistema</div>
+                    </div>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main App -->
+    <div class="app-container" id="app-main" style="display:none;">
+        <!-- Header -->
+        <header class="app-header">
+            <div class="brand">
+                <i class="fa-solid fa-utensils logo-icon"></i>
+                <div class="brand-text">
+                    <h1>FoodHub 360</h1>
+                    <span>Ecossistema Digital de Gestao e Rentabilidade</span>
+                </div>
+            </div>
+            <div class="header-right">
+                <button class="btn-icon-reset" id="btn-back-login" title="Trocar Perfil" style="background:var(--accent-blue-dim); border-color:rgba(59,130,246,0.2); color:var(--accent-blue);">
+                    <i class="fa-solid fa-arrow-right-from-bracket"></i>
+                </button>
+                <div class="user-badge" id="user-badge">
+                    <i class="fa-solid fa-user-circle"></i>
+                    <span id="user-role-label">-</span>
+                </div>
+                <div class="financial-badge">
+                    <div class="badge-label">Faturamento Acumulado</div>
+                    <div class="badge-value" id="total-revenue">R$ 0,00</div>
+                </div>
+                <button class="btn-icon-reset" id="btn-reset-system" title="Resetar Sistema">
+                    <i class="fa-solid fa-rotate-left"></i>
+                </button>
+            </div>
+        </header>
+
+        <!-- Grid -->
+        <main class="app-grid">
+
+            <!-- Left Column -->
+            <section class="grid-col operations-col">
+
+                <!-- PDV -->
+                <div class="card pdv-card" id="section-pdv">
+                    <div class="card-header">
+                        <h2><i class="fa-solid fa-cash-register"></i> PDV - Lancamento Rapido</h2>
+                        <span class="badge badge-info">Entrada Unificada</span>
+                    </div>
+                    <div class="unified-channels-bar">
+                        <span class="channel-indicator active"><i class="fa-brands fa-whatsapp"></i> WhatsApp</span>
+                        <span class="channel-indicator active"><i class="fa-solid fa-mobile-screen-button"></i> App</span>
+                        <span class="channel-indicator active"><i class="fa-solid fa-store"></i> Balcao</span>
+                        <span class="channel-indicator active"><i class="fa-solid fa-motorcycle"></i> Delivery</span>
+                    </div>
+                    <form id="pdv-form">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="product-select">Produto</label>
+                                <select id="product-select" required>
+                                    <option value="" disabled selected>Escolha um produto...</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="customer-name">Nome do Cliente</label>
+                                <input type="text" id="customer-name" placeholder="Ex: Joao Silva" maxlength="80">
+                            </div>
+                        </div>
+                        <div class="form-row-3">
+                            <div class="form-group">
+                                <label for="product-quantity">Quantidade (max 100)</label>
+                                <input type="number" id="product-quantity" min="1" max="100" value="1" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="order-source">Origem do Pedido</label>
+                                <select id="order-source" required>
+                                    <option value="Balcao">Balcao</option>
+                                    <option value="WhatsApp">WhatsApp</option>
+                                    <option value="App">Aplicativo</option>
+                                    <option value="Delivery">Delivery Externo</option>
+                                </select>
+                            </div>
+                            <div class="form-group conditional-field" id="delivery-type-group">
+                                <label for="delivery-type">Retirada / Entrega</label>
+                                <select id="delivery-type">
+                                    <option value="retirada">Retirar no Balcao</option>
+                                    <option value="entrega">Entrega no Endereco</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="conditional-field" id="address-group">
+                            <div class="form-group">
+                                <label for="delivery-address">Endereco de Entrega</label>
+                                <input type="text" id="delivery-address" placeholder="Rua, numero, bairro..." maxlength="200">
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-primary" id="btn-submit-order" style="margin-top:8px;">
+                            <i class="fa-solid fa-check"></i> Confirmar Venda
+                        </button>
+                    </form>
+                </div>
+
+                <!-- Estoque -->
+                <div class="card inventory-card" id="section-inventory">
+                    <div class="card-header">
+                        <h2><i class="fa-solid fa-boxes-stacked"></i> Estoque Dinamico</h2>
+                        <span class="badge badge-success">Tempo Real</span>
+                    </div>
+                    <div class="table-container">
+                        <table class="inventory-table">
+                            <thead>
+                                <tr>
+                                    <th>Produto</th>
+                                    <th>Preco Venda</th>
+                                    <th>Estoque</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody id="inventory-tbody"></tbody>
+                        </table>
+                    </div>
+                    <form id="replenish-form" class="replenish-row">
+                        <div class="form-group">
+                            <label for="replenish-product-select">Abastecer Produto</label>
+                            <select id="replenish-product-select" required>
+                                <option value="" disabled selected>Selecione...</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="replenish-quantity">Qtd (max 1000)</label>
+                            <input type="number" id="replenish-quantity" min="1" max="1000" value="50" required>
+                        </div>
+                        <button type="submit" class="btn-green">
+                            <i class="fa-solid fa-plus"></i> Inserir
+                        </button>
+                    </form>
+                </div>
+            </section>
+
+            <!-- Right Column -->
+            <section class="grid-col production-col">
+
+                <!-- KDS -->
+                <div class="card kds-card" id="section-kds">
+                    <div class="card-header">
+                        <h2><i class="fa-solid fa-fire-burner"></i> Painel KDS (Cozinha)</h2>
+                        <span class="badge badge-alert" id="kds-count">0 pendentes</span>
+                    </div>
+                    <div class="kds-grid" id="kds-container"></div>
+                </div>
+
+                <!-- Analista de Margens -->
+                <div class="card analyst-card" id="section-analyst">
+                    <div class="card-header">
+                        <h2><i class="fa-solid fa-chart-pie"></i> Analista de Margens (Segundo Gerente)</h2>
+                        <span class="badge badge-cyan">Modulo Inteligente</span>
+                    </div>
+                    <div class="analyst-content">
+                        <!-- Cost Alert -->
+                        <div class="analyst-alert" id="cost-alert">
+                            <div class="alert-icon"><i class="fa-solid fa-triangle-exclamation"></i></div>
+                            <div class="alert-text">
+                                <strong>Custo do Cheddar subiu 15%!</strong> A margem do Hamburgao Gourmet caiu para 11%. Considere reajustar o preco ou promover o cupom do app.
+                            </div>
+                        </div>
+
+                        <!-- BI Insight -->
+                        <div class="analyst-alert insight-alert">
+                            <div class="alert-icon"><i class="fa-solid fa-lightbulb"></i></div>
+                            <div class="alert-text">
+                                <strong>Analise de BI (Volume vs Margem):</strong>
+                                O Combo Pizza e um <em>Cavalo de Batalha</em>: vende muito mas margem original de apenas 12% devido ao alto custo. Ja a Torta de Limao e um <em>Quebra-Cabecas</em>: margem altissima (72%) mas vende pouco.
+                                <strong>Decisao:</strong> Corrija a pizza (+R$ 5,00) e divulgue cupons da torta.
+                            </div>
+                        </div>
+
+                        <!-- Demand Prediction -->
+                        <div class="analyst-prediction">
+                            <h3><i class="fa-solid fa-calendar-day"></i> Estimativa de Demanda (Previsao diaria)</h3>
+                            <p class="prediction-text">
+                                <strong>Hoje e Sexta-feira:</strong> Com base no historico, estima-se alta demanda. Voce precisara de aproximadamente:
+                            </p>
+                            <ul class="prediction-list">
+                                <li><strong>45 carnes de hamburguer</strong></li>
+                                <li><strong>30 bifes a milanesa</strong></li>
+                            </ul>
+                            <button class="btn-accent" id="btn-supply-stock">
+                                <i class="fa-solid fa-truck-ramp-box"></i> Abastecer Insumos Previstos
+                            </button>
+                        </div>
+
+                        <!-- Menu Engineering (Dinamico) -->
+                        <div class="menu-engineering">
+                            <h3><i class="fa-solid fa-chart-pie"></i> Menu Engineering (Foco em Lucro Real)</h3>
+                            <div class="menu-engineering-layout">
+                                <div class="engineering-grid" id="engineering-grid-dynamic">
+                                    <!-- Rendered dynamically by JS -->
+                                </div>
+                                <div class="chart-container-box">
+                                    <div class="eng-title" style="margin-bottom:6px;">Distribuicao de Lucro Real (R$)</div>
+                                    <div style="position:relative; height:140px; width:100%; max-width:200px; margin:0 auto;">
+                                        <canvas id="profit-pie-chart"></canvas>
+                                    </div>
+                                    <div style="font-size:10px; font-weight:700; color:var(--text-secondary); margin-top:8px;">
+                                        Lucro Total: <span id="total-profit-value" style="color:var(--accent-green); font-weight:800;">R$ 0,00</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Coupon Personalization -->
+                        <div class="personalization-box">
+                            <h3><i class="fa-solid fa-ticket"></i> Cupom Personalizado</h3>
+                            <p>Crie cupons de desconto estrategicos para migrar clientes do WhatsApp para o App e reduzir custos operacionais.</p>
+                            <button class="btn-accent" id="btn-create-coupon">
+                                <i class="fa-solid fa-plus"></i> Criar Cupom Personalizado
+                            </button>
+                            <div class="coupon-display hidden" id="coupon-display">
+                                Codigo: <strong id="coupon-code">-</strong> — Desconto de <strong id="coupon-discount">-</strong> ativo!
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Coupon Modal -->
+    <div class="modal-overlay hidden" id="coupon-modal">
+        <div class="modal-card">
+            <h3><i class="fa-solid fa-ticket"></i> Criar Cupom de Desconto</h3>
+            <div class="form-group">
+                <label for="coupon-name-input">Nome do Cupom</label>
+                <input type="text" id="coupon-name-input" placeholder="Ex: APPSEXTATOP" maxlength="20" value="APPSEXTATOP">
+            </div>
+            <div class="form-group">
+                <label for="coupon-discount-input">Desconto (%)</label>
+                <input type="number" id="coupon-discount-input" min="1" max="50" value="15">
+            </div>
+            <div class="form-group">
+                <label for="coupon-channel">Canal de Divulgacao</label>
+                <select id="coupon-channel">
+                    <option value="App">Aplicativo</option>
+                    <option value="WhatsApp">WhatsApp</option>
+                    <option value="Todos">Todos os Canais</option>
+                </select>
+            </div>
+            <div class="modal-actions">
+                <button class="btn btn-secondary" id="btn-coupon-cancel">Cancelar</button>
+                <button class="btn btn-primary" id="btn-coupon-confirm"><i class="fa-solid fa-check"></i> Gerar Cupom</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast -->
+    <div id="toast" class="toast hidden"></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
