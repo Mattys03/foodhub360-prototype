@@ -80,6 +80,20 @@ const sectionAnalyst = document.getElementById("section-analyst");
 
 // Role Selection
 window.selectRole = function(role) {
+    const passwords = {
+        balconista: "",
+        gerente: "gerente123",
+        admin: "admin123"
+    };
+
+    if (passwords[role]) {
+        const psw = prompt(`Digite a senha para acessar como ${role} (Dica: ${passwords[role]}):`);
+        if (psw !== passwords[role]) {
+            alert("Senha incorreta!");
+            return;
+        }
+    }
+
     currentRole = role;
     loginOverlay.style.display = "none";
     appMain.style.display = "block";
