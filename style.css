@@ -887,8 +887,21 @@ textarea { height: auto; resize: vertical; }
 ::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.15); }
 
 /* Responsive */
+@media (max-width: 1400px) {
+    .app-grid, .menu-engineering-layout { grid-template-columns: 1fr; gap: 20px; }
+    .kds-grid, .inventory-grid { grid-template-columns: 1fr; }
+    .app-container { padding: 16px; }
+}
+
 @media (max-width: 1024px) {
-    .app-grid { grid-template-columns: 1fr; }
     .app-header { flex-wrap: wrap; gap: 12px; }
-    .menu-engineering-layout { grid-template-columns: 1fr !important; }
+    .header-right { flex-wrap: wrap; width: 100%; justify-content: flex-end; }
+    .modal-card { width: 95%; padding: 24px; }
+    .ticket-grid { grid-template-columns: 1fr; }
+    .eng-box { font-size: 14px; }
+}
+
+@media (max-width: 768px) {
+    .login-card { padding: 32px 20px; }
+    .form-row { grid-template-columns: 1fr; }
 }
